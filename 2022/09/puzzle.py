@@ -14,7 +14,6 @@ LOOKUP = {
     (2, 0) : (1, 0),
     (0, -2) : (0, -1),
     (0, 2) : (0, 1),
-
     (2, 2) : (1, 1),
     (2, 1) : (1, 1),
     (1, 2) : (1, 1),
@@ -44,27 +43,7 @@ def add(a, b):
 def sub(a, b):
     return (a[0] - b[0], a[1] - b[1])
 
-def move(direction):
-    head = add(head, direction)
-    delta = sub(head, tail)
-    print(delta)
-
-def part_1(instructions):
-    head = (0, 0)
-    tail = (0, 0)
-
-    tail_positions = set()
-    for direction, amount in instructions:
-        head_movement = MOVEMENTS[direction]
-        for _ in range(amount):
-            head = add(head, head_movement)
-            delta = sub(head, tail)
-            tail_movement = LOOKUP[delta]
-            tail = add(tail, tail_movement)
-            tail_positions.add(tail)
-    print("part 1", len(tail_positions))
-
-def part_2(instructions, length=10):
+def simulate(instructions, length=10):
     rope = [(0, 0)] * length
     tail_positions = set()
     for direction, amount in instructions:
@@ -76,11 +55,11 @@ def part_2(instructions, length=10):
                 part_movement = LOOKUP[delta]
                 rope[i] = add(rope[i], part_movement)
             tail_positions.add(rope[-1])
-    print("part 2", len(tail_positions))
+    return len(tail_positions)
 
 if __name__ == "__main__":
     file_path = "input.txt" if len(sys.argv) < 2 else sys.argv[1]
     instructions = load_file(file_path)
-    part_1(instructions)
-    part_2(instructions)
+    print("part 1", simulate(instructions, 2))
+    print("part 2", simulate(instructions, 10))
     
