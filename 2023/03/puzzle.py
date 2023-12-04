@@ -28,52 +28,81 @@ def load_file(file_path):
         return line.strip()
     with open(file_path, "r") as file: return [parse_line(line) for line in file.readlines()]
 
+def extract_details(data):
+    for y, line in enumerate(data):
+        x = 0
+        while x < len(line):
+            if line[x].isnumeric():
+                sx = x
+                while x < len(line) and line[x].isnumeric():
+                    x += 1
+                x -= 1
+                ex = x
+                yield (sx, y, line[sx:ex+1])
+            elif line[x] != ".":
+                yield (x, y, line[x])
+            x += 1
+
 def part_1(data):
     MAX_X = len(data[0])
     MAX_Y = len(data)
-    print(f"{MAX_X=} {MAX_Y=}")
 
-    def check_if_part(sx, ex, y):
-        min_x = max(sx-1, 0)
-        max_x = min(ex+1, MAX_X-1)
+    details = list(extract_details(data))
+    numbers = [(x, y, detail) for x, y, detail in details if detail[0].isnumeric()]
+    parts = { (x, y) : detail for x, y, detail in details if not detail[0].isnumeric() } 
+
+    def check_if_part_number(x, y, number):
+        min_x = max(x-1, 0)
+        max_x = min(x+len(number), MAX_X-1)
         min_y = max(y-1, 0)
         max_y = min(y+1, MAX_Y-1)
 
-        for j in range(min_y, max_y+1):
-            line = data[j]
-            for i in range(min_x, max_x+1):
-                char = line[i]
-                if char == ".": continue
-                if char.isnumeric(): continue
-                return True
+        for py in range(min_y, max_y+1):
+            for px in range(min_x, max_x+1):
+                if (px, py) in parts:
+                    return True
         return False
 
-    def get_numbers():
-        for y, line in enumerate(data):
-            x = 0
-            # print(line)
-            while x < len(line):
-                if line[x].isnumeric():
-                    sx = x
-                    while x < len(line) and line[x].isnumeric():
-                        x += 1
-                    ex = x-1
-                    yield (sx, ex, y)
-                x += 1
+    part_numbers = [(x, y, number) for x, y, number in numbers if check_if_part_number(x, y, number)]
 
-    # for sx, ex, y in get_numbers():
-    #     result = check_if_part(sx, ex, y)
-    #     print("------------------")
-    #     print(f"{sx=} {ex=} {y=} {int(data[y][sx:ex+1])}")
-    #     for dy in [-1, 0, 1]:
-    #         print(data[y+dy][sx-1:ex+2])
-    #     print(result)
-
-    total = sum(int(data[y][sx:ex+1]) for sx, ex, y in get_numbers() if check_if_part(sx, ex, y))
-    print(total)
+    total = sum(int(part_number) for x, y, part_number in part_numbers) 
+    print(f"part 1: {total}")
 
 def part_2(data):
-    pass
+    MAX_X = len(data[0])
+    MAX_Y = len(data)
+
+    details = list(extract_details(data))
+    numbers = [(x, y, detail) for x, y, detail in details if detail[0].isnumeric()]
+    parts = { (x, y) : detail for x, y, detail in details if not detail[0].isnumeric() } 
+    gears = { (x, y) : [] for x, y in parts if parts[(x, y)] == "*" }
+
+    def find_gear(x, y, number):
+        min_x = max(x-1, 0)
+        max_x = min(x+len(number), MAX_X-1)
+        min_y = max(y-1, 0)
+        max_y = min(y+1, MAX_Y-1)
+        for py in range(min_y, max_y+1):
+            for px in range(min_x, max_x+1):
+                if (px, py) in gears:
+                    return gears[(px, py)]
+        return None
+                    
+    for x, y, number in numbers:
+        gear = find_gear(x, y, number)
+        if gear is None:
+            continue
+        gear.append(int(number))
+
+    total = 0
+    for x, y in gears:
+        gear_numbers = gears[(x, y)]
+        if len(gear_numbers) != 2:
+            continue
+        gear_ratio = gear_numbers[0] * gear_numbers[1]
+        total += gear_ratio
+
+    print(f"part 2: {total}")
 
 # --- Solution End ------
 
