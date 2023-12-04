@@ -4,6 +4,7 @@
 
 import sys
 
+
 def read_input_file(file_path):
     print(f"Loading input file [{file_path}]")
     read_crates = True
@@ -35,9 +36,10 @@ def read_input_file(file_path):
             source = int(bits[3])
             target = int(bits[5])
             instructions.append((number_of_crates, source, target))
-    
+
     print(f"Loaded {len(stacks)} stacks and {len(instructions)} instructions")
     return stacks, instructions
+
 
 if __name__ == "__main__":
     file_path = "input.txt" if len(sys.argv) < 2 else sys.argv[1]
