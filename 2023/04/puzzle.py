@@ -9,15 +9,17 @@ import requests
 from rich import print, traceback
 traceback.install()
 
+AOC_ENV_VARIABLE = "AOC_SESSION_ID"
+PUZZLE_URL = "https://adventofcode.com/2023/day/4/input"
 INPUT_FILE_NAME = "input.txt"
 YEAR = 2023
 DAY = 4
 
 def get_data():
     if not os.path.exists(INPUT_FILE_NAME):
-        session_id = os.environ.get('AOC_SESSION_ID', None)
-        if session_id is None: raise Exception("Cannot retrieve input.txt file as session ID is not present in environment variables.")
-        data = requests.get(f"https://adventofcode.com/2023/day/4/input", cookies={"session": session_id})
+        session_id = os.environ.get(AOC_ENV_VARIABLE, None)
+        if session_id is None: raise Exception("Cannot retrieve input.txt file as AOC session ID is not present in environment variables.")
+        data = requests.get(PUZZLE_URL, cookies={"session": session_id})
         with open(INPUT_FILE_NAME, "w") as file: file.write(data.text)
     return load_file(INPUT_FILE_NAME if len(sys.argv) < 2 else sys.argv[1])
 

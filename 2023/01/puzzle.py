@@ -22,12 +22,6 @@ def get_data():
         with open(INPUT_FILE_NAME, "w") as file: file.write(data.text)
     return load_file(INPUT_FILE_NAME if len(sys.argv) < 2 else sys.argv[1])
 
-def load_file(file_path):
-    def parse_line(line):
-        return line.strip()
-
-    with open(file_path, "r") as file: return [parse_line(line) for line in file.readlines()]
-
 # --- Solution Start ----
 
 WORDS = { 
@@ -42,13 +36,17 @@ WORDS = {
     "nine" : "9",
 }
 
+def load_file(file_path):
+    def parse_line(line):
+        return line.strip()
+    with open(file_path, "r") as file: return [parse_line(line) for line in file.readlines()]
+
 def part_1(data):
     def parse_line(line):
         numbers = [c for c in line if c.isnumeric()]
         return int(numbers[0]+numbers[-1])
-
-    numbers = sum(parse_line(line) for line in data)
-    print(numbers)        
+    result = sum(parse_line(line) for line in data)
+    print(f"part 1: {result}")        
 
 def part_2(data):
     def parse_line(line):
@@ -68,7 +66,7 @@ def part_2(data):
         return int(numbers[0]+numbers[-1])
     
     result = sum(parse_line(line) for line in data)
-    print(result)
+    print(f"part 2: {result}")        
 # --- Solution End ------
 
 if __name__ == "__main__":

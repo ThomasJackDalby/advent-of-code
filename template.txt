@@ -30,10 +30,12 @@ def load_file(file_path):
     with open(file_path, "r") as file: return [parse_line(line) for line in file.readlines()]
 
 def part_1(data):
-    pass
+    result = None
+    print(f"part 1: {result}")
     
 def part_2(data):
-    pass
+    result = None
+    print(f"part 2: {result}")
 
 # --- Solution End ------
 
