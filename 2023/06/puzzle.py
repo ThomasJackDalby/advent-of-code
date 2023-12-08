@@ -22,6 +22,7 @@ def get_data():
     return load_file(INPUT_FILE_NAME if len(sys.argv) < 2 else sys.argv[1])
 
 # --- Solution Start ----
+from functools import reduce
 
 def load_file(file_path):
     def parse_line(line):
@@ -31,26 +32,17 @@ def load_file(file_path):
     with open(file_path, "r") as file:
         return [parse_line(line) for line in file.readlines()]
 
-def part_1(data):
-    times, distances = data
-    result = 1
-    for i in range(len(times)):
-        time = times[i]
-        distance = distances[i]
-        min_charge = next(c for c in range(0, time) if (time - c) * c > distance)
-        max_charge = next(c for c in range(time, 0, -1) if (time - c) * c > distance)
-        result *= max_charge - min_charge + 1
+def solve(time, distance):
+    get_charge = lambda values: next(filter(lambda c: (time - c) * c > distance, values))
+    return get_charge(range(time, 0, -1)) - get_charge(range(0, time)) + 1
 
+def part_1(data):
+    result = reduce(lambda x, y: x*y, map(lambda d: solve(*d), zip(*data)))
     print(f"part 1: {result}")
     
 def part_2(data):
-    times, distances = data
-    time = int("".join(str(t) for t in times))
-    distance = int("".join(str(d) for d in distances))
-
-    min_charge = next(c for c in range(0, time) if (time - c) * c > distance)
-    max_charge = next(c for c in range(time, 0, -1) if (time - c) * c > distance)
-    result = max_charge - min_charge + 1
+    correct = lambda numbers: int("".join(str(n) for n in numbers))
+    result = solve(*map(correct, data))
     print(f"part 2: {result}")
 
 # --- Solution End ------
