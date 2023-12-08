@@ -32,6 +32,7 @@ ONE_PAIR = 3
 HIGH_CARD = 2
 
 CARD_VALUES = "23456789TJQKA"
+JOKER_CARD_VALUES = "J23456789TQKA"
 
 def load_file(file_path):
     def parse_line(line):
@@ -39,22 +40,28 @@ def load_file(file_path):
         return [hand, int(bid)]
     with open(file_path, "r") as file: return [parse_line(line) for line in file.readlines()]
 
-def get_card_type(hand):
-    cards = [sum(1 for i in hand if i == c) for c in set(hand)]
-    if len(cards) == 1: return FIVE_OF_A_KIND
-    if len(cards) == 2: return FOUR_OF_A_KIND if any(filter(lambda c: c == 4, cards)) else FULL_HOUSE
-    if len(cards) == 3: return THREE_OF_A_KIND if any(filter(lambda c: c == 3, cards)) else TWO_PAIR
+def get_card_type(hand, joker_mode = False):
+    number_of_jokers = 0
+    if joker_mode:
+        hand = "".join(c for c in hand if c != "J")
+        number_of_jokers = 5 - len(hand)
+    cards = list(sorted(sum(1 for i in hand if i == c) for c in set(hand)))
+
+    if len(cards) <= 1: return FIVE_OF_A_KIND
+    if len(cards) == 2: return FOUR_OF_A_KIND if cards[-1]+number_of_jokers == 4 else FULL_HOUSE
+    if len(cards) == 3: return THREE_OF_A_KIND if cards[-1]+number_of_jokers == 3 else TWO_PAIR
     return ONE_PAIR if len(cards) == 4 else HIGH_CARD
 
-def get_card_rank(hand):
-    return sum((v * pow(13, i) for i, v in enumerate(list(map(CARD_VALUES.index, reversed(hand))) + [get_card_type(hand)])))
+def get_card_rank(hand, joker_mode = False):
+    values = JOKER_CARD_VALUES if joker_mode else CARD_VALUES
+    return sum((v * pow(13, i) for i, v in enumerate(list(map(values.index, reversed(hand))) + [get_card_type(hand, joker_mode)])))
 
 def part_1(data):
     result = sum(((i + 1) * bid for i, (_, bid) in enumerate(sorted(data, key=lambda game: get_card_rank(game[0])))))
     print(f"part 1: {result}")
     
 def part_2(data):
-    result = None
+    result = sum(((i + 1) * bid for i, (_, bid) in enumerate(sorted(data, key=lambda game: get_card_rank(game[0], True)))))
     print(f"part 2: {result}")
 
 # --- Solution End ------
