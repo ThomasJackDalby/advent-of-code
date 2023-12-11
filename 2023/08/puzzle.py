@@ -38,6 +38,7 @@ def part_1(data):
     directions, nodes = data
     current = "AAA"
     index = 0
+    
     while current != "ZZZ":
         direction = directions[index % len(directions)]
         current = nodes[current][direction]
@@ -47,18 +48,18 @@ def part_1(data):
     
 def part_2(data):
     directions, nodes = data
-    current = [node for node in nodes.keys() if node[-1] == "A"]
-    print(current)
-    index = 0
-    result = 0
-    while any((node[-1] != "Z" for node in current)):
-        direction = directions[index]
-        for i in range(len(current)): current[i] = nodes[current[i]][direction]
-        index += 1
-        result += 1
-        if index >= len(directions):
-            index = 0
-        print(current)
+    start_nodes = [node for node in nodes.keys() if node[-1] == "A"]
+    number_of_loops = [0] * len(start_nodes)
+
+    for i, start_node in enumerate(start_nodes):
+        node = start_node
+        while node[-1] != "Z":
+            for direction in directions:
+                node = nodes[node][direction]
+            number_of_loops[i] += 1
+    
+    from math import lcm
+    result = lcm(*number_of_loops) * len(directions)
     print(f"part 2: {result}")
 
 # --- Solution End ------
