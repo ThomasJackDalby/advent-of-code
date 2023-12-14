@@ -31,11 +31,11 @@ def load_file(file_path):
 
 def part_1(data):
     result = None
-    print(f"part 1: {result}")
+    print(f"part 1: {{result}}")
     
 def part_2(data):
     result = None
-    print(f"part 2: {result}")
+    print(f"part 2: {{result}}")
 
 # --- Solution End ------
 
