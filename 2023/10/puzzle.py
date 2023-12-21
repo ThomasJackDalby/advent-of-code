@@ -96,16 +96,28 @@ def part_2(data):
     width = max((x for x, _ in data.keys()))+1
     height = max((y for _, y in data.keys()))+1
     result_map = [0] * width * height
+    loop = set()
     def get_index(x, y):
         return y * width + x
     def update(node):
         nonlocal result_map
         result_map[get_index(*node)] = 1
+        loop.add[node]
     find_main_loop(data, update)
 
     for y in range(0, height):
         index = get_index(0, y)
         print("".join("." if i == 0 else "X" for i in result_map[index:index+width]))
+
+    # pick the min x, y loop piece as we know it's edge of loop
+    min_loop = None
+
+
+    # need to flood fill the result map
+    start = (0, 0)
+    queue = [start]
+    while len(queue) > 0:
+        pass
 
     result = None
     print(f"part 2: {result}")
