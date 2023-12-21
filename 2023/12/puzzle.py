@@ -37,11 +37,12 @@ def part_1(data):
         print(f"{pattern}|{groups}")
         if len(groups) == 0 and "#" not in pattern: return 1
         group = groups[0]
+        next_groups = groups[1:] if len(groups) > 1 else []
+
         total = 0
         for i in range(len(pattern)-group+1):
             if all(pattern[i + j] in ("#", "?") for j in range(group)) and (len(pattern) <= i + group or pattern[i + group] in (".", "?")):
                 next_pattern = pattern[i+group+1:] if i+group < len(pattern) else "" 
-                next_groups = groups[1:] if len(groups) > 1 else []
                 total += evaluate(next_pattern, next_groups)
         return total
 
