@@ -82,16 +82,13 @@ def part_1(data):
     
 def part_2(data):
     _, height, _, ball_rocks = data
-    # north, west, south, east
 
     hashed = {}
     total_number_of_cycles = 1000000000
     index = 0
     while index < total_number_of_cycles:
-        tilt(data, 0)
-        tilt(data, 1)
-        tilt(data, 2)
-        tilt(data, 3)
+        for direction in range(4):
+            tilt(data, direction)
         index += 1
         
         hash_value = hash(tuple(ball_rocks))
