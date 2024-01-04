@@ -38,25 +38,10 @@ def check_pattern_fits(pattern, group, i):
     # print(f"{len(pattern)=} {i=} {group=} {i+group=}")
     return pattern[i + group] in (".", "?")
 
-<<<<<<< HEAD
-    def evaluate(pattern, groups):
-        print(f"{pattern}|{groups}")
-        if len(groups) == 0 and "#" not in pattern: return 1
-        group = groups[0]
-        next_groups = groups[1:] if len(groups) > 1 else []
-
-        total = 0
-        for i in range(len(pattern)-group+1):
-            if all(pattern[i + j] in ("#", "?") for j in range(group)) and (len(pattern) <= i + group or pattern[i + group] in (".", "?")):
-                next_pattern = pattern[i+group+1:] if i+group < len(pattern) else "" 
-                total += evaluate(next_pattern, next_groups)
-        return total
-=======
 CACHE = { }
 def evaluate(pattern, groups):
     if len(groups) == 0: raise Exception()
     if len(pattern) == 0: return 0
->>>>>>> a257cb6e344fe1bee5f9e2cffbeb23a4ea4e3b7b
 
     key = (pattern, tuple(groups))
     if key in CACHE: return CACHE[key]

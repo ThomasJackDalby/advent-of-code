@@ -29,16 +29,13 @@ if __name__ == "__main__":
     # if args.year != today.year:
 
     folder_path = f"{args.year}/{args.day:02d}"
-    print(f"Folder path is {folder_path}")
     if not os.path.exists(folder_path):
-        print(f"[{folder_path}] does not exist.")
+        print(f"Creating folders at {folder_path}")
         os.makedirs(folder_path, exist_ok=True)
     os.chdir(folder_path)
 
-    # create_blank_file(INPUT_FILE_NAME)
-    # create_blank_file(TEST_INPUT_FILE_NAME)
-
-    if os.path.exists(TEMPLATE_FILE_PATH):
+    if not os.path.exists(SCRIPT_FILE_NAME):
+        print(f"Creating {SCRIPT_FILE_NAME}")
         with open(TEMPLATE_FILE_PATH, "r") as file:
             template = file.read()
         template = template.format(datetime=datetime.datetime.now(), year=args.year, day=args.day)
@@ -46,3 +43,9 @@ if __name__ == "__main__":
             file.write(template)
     else:
         print("Puzzle file already exists")
+
+    if not os.path.exists(TEST_INPUT_FILE_NAME):
+        print(f"Creating {TEST_INPUT_FILE_NAME}")
+        create_blank_file(TEST_INPUT_FILE_NAME)
+
+    os.system("cmd")
