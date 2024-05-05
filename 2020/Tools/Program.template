@@ -1,0 +1,39 @@
+// Advent Of Code {0} - Puzzle {1}
+// https://adventofcode.com/{0}/day/{1}
+// Tom Dalby - https://github.com/thomasjackdalby
+// Date: {2}
+
+const string DefaultInputFilePath = "input.txt";
+
+// --- Solution Start ----
+
+string[] LoadInputFile(string filePath)
+{{
+    if (!File.Exists(filePath)) throw new FileNotFoundException(filePath);
+    using Stream stream = File.Open(filePath, FileMode.Open, FileAccess.Read);
+    using StreamReader reader = new(stream);
+    return reader.ReadToEnd().Split("\n");
+}}
+
+int SolvePart1(string[] data)
+{{
+    int result = -1;
+    return result;
+}}
+
+int SolvePart2(string[] data)
+{{
+    int result = -1;
+    return result;
+}}
+
+// --- Solution End ----
+
+string inputFilePath = args.Length < 2
+    ? args[1]
+    : DefaultInputFilePath;
+Console.WriteLine($"Loading [{{inputFilePath}}]");
+
+string[] data = LoadInputFile(inputFilePath);
+Console.WriteLine($"Part 1: {{SolvePart1(data)}}");
+Console.WriteLine($"Part 2: {{SolvePart2(data)}}");

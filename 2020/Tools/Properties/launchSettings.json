@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Setup": {
+      "commandName": "Project",
+      "commandLineArgs": "./Setup.csproj 2020 5"
+    }
+  }
+}
