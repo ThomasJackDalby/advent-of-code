@@ -5,6 +5,7 @@ import os
 import sys
 import datetime
 import requests
+from argparse import ArgumentParser
 
 TEMPLATE_FILE_NAME = "template.txt"
 TEMPLATE_FILE_PATH = os.path.join(os.path.dirname(__file__), TEMPLATE_FILE_NAME)
@@ -17,16 +18,14 @@ def create_blank_file(file_path):
         pass
     file.close()
 
-if __name__ == "__main__":
-    from argparse import ArgumentParser
-
+def main():
+    today = datetime.datetime.now()
     parser = ArgumentParser()
-    parser.add_argument("year", type=int)
-    parser.add_argument("day", type=int)
+    parser.add_argument("-y", "--year", type=int, default=today.year)
+    parser.add_argument("-d", "--day", type=int, default=today.day)
     args = parser.parse_args()
 
-    # today = datetime.now()
-    # if args.year != today.year:
+    print(f"Puzzle {args.year}-{args.day:02d}")
 
     folder_path = f"{args.year}/{args.day:02d}"
     if not os.path.exists(folder_path):
@@ -49,3 +48,6 @@ if __name__ == "__main__":
         create_blank_file(TEST_INPUT_FILE_NAME)
 
     os.system("cmd")
+
+if __name__ == "__main__":
+    main()
