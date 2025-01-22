@@ -71,6 +71,13 @@ def part_1(data):
     print(f"part 1: {result}")
     
 def part_2(data):
+
+    # at some point they become an xmas tree (after a lot of iterations)
+    # hash?
+    
+
+
+
     result = None
     print(f"part 2: {result}")
 
