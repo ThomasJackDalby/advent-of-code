@@ -1,41 +1,45 @@
+// Advent Of Code 2025 - Puzzle 2
+// https://adventofcode.com/2025/day/2
+// Tom Dalby - https://github.com/thomasjackdalby
+// Date: 2025-12-03
+
 use std::fs;
 
-const FILE_PATH: &str = "test.txt";
-
 fn main() {
-    let contents = fs::read_to_string(FILE_PATH)
-        .expect("Should have been able to read the file");
-    let mut score: u64 = 0;
+    let contents = fs::read_to_string("input.txt").unwrap();
+    let mut counter: usize = 0;
     for range in contents.split(",") {
-        let values: Vec<&str> = range.split("-").collect();
-        let range_start: u64 = values[0].parse().expect("Should parse to int.");
-        let range_end: u64 = values[1].parse().expect("Should parse to int.");
-        println!("{range_start} {range_end}");
-
+        let mut split_iter = range.split("-");
+        let range_start: usize = split_iter.next().unwrap().parse().unwrap();
+        let range_end: usize = split_iter.next().unwrap().parse().unwrap();
         for id in range_start..range_end+1 {
             if !check_id(id) {
-                score += id;
-                println!("score: {score}");
+                counter += id;
             }
         }
     }
-
-    println!("final score: {score}");
+    println!("counter: {counter}");
 }
 
-fn check_id(id: u64) -> bool {       
-    let s: String = id.to_string();
-    println!("LEN{}", s.len() / 2)
-    return false;
-    for i in 0..s.len() / 2 {
-        for j in 1..(s.len()-i)/2 {
-            let first = &s[i..i+j];
-            let second = &s[i+j..i+2*j];
-            println!("f:{first} s:{second}");
-            if first == second {
-                println!("{id} {i} {first}");
-                return false;
+fn check_id(id: usize) -> bool {
+    let id_str = id.to_string();
+    let id_length: usize = id_str.chars().count();
+    for pattern_length in 1..(id_length / 2) + 1 {
+        if id_length % pattern_length != 0 { 
+            continue;
+        }
+        
+        let mut valid: bool = false;
+        let left = &id_str[0..pattern_length];
+        for i in 1..id_length/pattern_length {
+            let right = &id_str[i*pattern_length..(i+1)*pattern_length];
+            if left != right {
+                valid = true;
+                break;
             }
+        }
+        if !valid {
+            return false;
         }
     }
     return true;
