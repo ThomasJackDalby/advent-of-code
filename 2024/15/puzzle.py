@@ -43,6 +43,8 @@ DELTAS = [
 
 WALL = "#"
 BOX = "O"
+BOX_LEFT = "["
+BOX_RIGHT = "]"
 ROBOT = "@"
 EMPTY = "."
 
@@ -108,14 +110,99 @@ def part_1(data):
         tile = tiles[ty][tx]
         if tile == EMPTY: move_robot_to_tile(tx, ty)
         elif tile == BOX: try_to_push_boxes(tx, ty)
-        
+    
+    # display grid
     for line in tiles:
         print("".join(line))
 
     result = get_gps_score(tiles)
     print(f"part 1: {result}")
     
+
+def convert_map(tiles):
+
+    def convert_tile(tile):
+        if tile == "O": return ["[", "]"]
+        if tile == ".": return [".","."]
+        if tile == "#": return ["#", "#"]
+        if tile == "@": return ["@"]
+
+    def convert_row(row):
+        return "".join([new_tile for tile in row for new_tile in convert_tile(tile)])
+
+    return [convert_row(row) for row in tiles]
+
 def part_2(data):
+    tiles, directions = data
+    tiles = convert_map(tiles)
+
+    # find robot start position
+    rx, ry = find_robot_position(tiles)
+
+    def move_robot_to_tile(tx, ty): 
+        # note, this does not check if tile move is allowed   
+        nonlocal rx, ry
+        tiles[ry][rx] = EMPTY
+        rx = tx
+        ry = ty
+        tiles[ry][rx] = ROBOT
+
+    for direction in directions:
+        dx, dy = get_direction_delta(direction)
+
+        def try_to_push_boxes(tx, ty):
+            # can try to push the boxes if there is empty space behind the last box
+            # needs to be a tree of connected boxes
+
+            def is_free_or_unpinned(x, y):
+                tile = tiles[y][x]
+                if tile == EMPTY: return True
+                if tile == WALL: return False
+                if tile == BOX: return is_free_or_unpinned(x+dx, y+dy)
+                if tile in [BOX_LEFT, BOX_RIGHT]:
+                    if dy == 0: return is_free_or_unpinned(x+dx, y) # not quite
+                    else:
+                        if not is_free_or_unpinned(x, y+dy): return False
+                        if x == BOX_LEFT: return is_free_or_unpinned(x+1, y+dy)
+                        else: return is_free_or_unpinned(x-1, y+dy)
+                raise Exception()
+
+            if not is_free_or_unpinned(tx, ty): return
+
+            # try and update (by moving everything)
+            def move_boxes(x, y):
+                tile = tiles[y][x]
+                if tile == EMPTY: 
+                    # move box
+                    tile = tiles[x-dx][y-dy]
+                    tiles[y][x] = tile
+                    if tile == BOX_LEFT: 
+
+                if tile == WALL: raise Exception()
+                if tile == BOX: return is_free_or_unpinned(x+dx, y+dy)
+                if tile in [BOX_LEFT, BOX_RIGHT]:
+                    if dy == 0: return is_free_or_unpinned(x+dx, y)
+                    else:
+                        if not is_free_or_unpinned(x, y+dy): return False
+                        if x == BOX_LEFT: return is_free_or_unpinned(x+1, y+dy)
+                        else: return is_free_or_unpinned(x-1, y+dy)
+                raise Exception()
+
+            if tiles[y][x] == EMPTY:
+                tiles[y][x] = BOX
+                move_robot_to_tile(tx, ty)
+
+        # check the position it wants to move to
+        tx = rx + dx
+        ty = ry + dy
+        tile = tiles[ty][tx]
+        if tile == EMPTY: move_robot_to_tile(tx, ty)
+        elif tile == BOX_LEFT or tile == BOX_RIGHT: try_to_push_boxes(tx, ty)
+    
+    # display grid
+    for line in tiles:
+        print("".join(line))
+
     result = None
     print(f"part 2: {result}")
 
@@ -123,5 +210,5 @@ def part_2(data):
 
 if __name__ == "__main__":
     data = get_data()
-    part_1(data)
+    # part_1(data)
     part_2(data)

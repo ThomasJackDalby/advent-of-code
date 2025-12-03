@@ -2,16 +2,11 @@
 # Tom Dalby - https://github.com/thomasjackdalby
 
 import os
-import sys
 import datetime
-import requests
 from argparse import ArgumentParser
 
-TEMPLATE_FILE_NAME = "template.txt"
-TEMPLATE_FILE_PATH = os.path.join(os.path.dirname(__file__), TEMPLATE_FILE_NAME)
-INPUT_FILE_NAME = "input.txt"
-TEST_INPUT_FILE_NAME = "test.txt"
-SCRIPT_FILE_NAME = "puzzle.py"
+ROOT_FOLDER_PATH = os.path.dirname(__file__)
+TEST_FILE_NAME = "test.txt"
 
 def create_blank_file(file_path):
     with open(file_path ,"w") as file:
@@ -21,33 +16,46 @@ def create_blank_file(file_path):
 def main():
     today = datetime.datetime.now()
     parser = ArgumentParser()
+    parser.add_argument("language", type=str)
     parser.add_argument("-y", "--year", type=int, default=today.year)
     parser.add_argument("-d", "--day", type=int, default=today.day)
     args = parser.parse_args()
 
     print(f"Puzzle {args.year}-{args.day:02d}")
 
-    folder_path = f"{args.year}/{args.day:02d}"
-    if not os.path.exists(folder_path):
-        print(f"Creating folders at {folder_path}")
-        os.makedirs(folder_path, exist_ok=True)
-    os.chdir(folder_path)
+    puzzle_folder_path = os.path.join(ROOT_FOLDER_PATH, f"{args.year}", f"{args.day:02d}")
+    if not os.path.exists(puzzle_folder_path):
+        print(f"Creating folders at {puzzle_folder_path}")
+        os.makedirs(puzzle_folder_path, exist_ok=True)
 
-    if not os.path.exists(SCRIPT_FILE_NAME):
-        print(f"Creating {SCRIPT_FILE_NAME}")
-        with open(TEMPLATE_FILE_PATH, "r") as file:
-            template = file.read()
-        template = template.format(datetime=datetime.datetime.now(), year=args.year, day=args.day)
-        with open(SCRIPT_FILE_NAME, "x") as file:
-            file.write(template)
-    else:
-        print("Puzzle file already exists")
+    # loop over template files
+    root_folder_path = os.path.join(ROOT_FOLDER_PATH, "templates", args.language)
+    for folder_path, _, file_names in os.walk(root_folder_path):
+        target_folder_path = os.path.join(puzzle_folder_path, os.path.relpath(folder_path, root_folder_path))
+        if not os.path.exists(target_folder_path):
+            print(f"Creating directory [{target_folder_path}]")
+            os.makedirs(target_folder_path, exist_ok=True)
 
-    if not os.path.exists(TEST_INPUT_FILE_NAME):
-        print(f"Creating {TEST_INPUT_FILE_NAME}")
-        create_blank_file(TEST_INPUT_FILE_NAME)
+        for file_name in file_names:
+            source_file_path = os.path.join(folder_path, file_name)
+            file_path = os.path.relpath(source_file_path, root_folder_path)
+            target_file_path = os.path.join(puzzle_folder_path, file_path)
 
-    os.system("cmd")
+            if not os.path.exists(target_file_path):
+                print(f"Creating file [{target_file_path}]")
+                with open(source_file_path, "r") as file:
+                    template = file.read()
+                template = template.format(datetime=datetime.datetime.now(), year=args.year, day=args.day)
+                with open(target_file_path, "x") as file:
+                    file.write(template)
+            else:
+                print(f"Template [{file_path}] already exists.")
+
+    test_target_file_path = os.path.join(puzzle_folder_path, TEST_FILE_NAME)
+    if not os.path.exists(test_target_file_path):
+        create_blank_file(test_target_file_path)
+
+    # os.system("cmd")
 
 if __name__ == "__main__":
     main()
